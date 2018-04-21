@@ -50,4 +50,7 @@ object AshMinTemperatures {
     (line)
   }
   
+  
+  def min() {}
+  
 }
