@@ -1,0 +1,50 @@
+package com.sundogsoftware.spark
+
+import org.apache.log4j._
+import org.apache.spark._
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import breeze.linalg.min
+
+
+
+object AshMinTemperatures {
+  
+  def main(args: Array[String]){
+    
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    val sc= new SparkContext("local[*]", "AshMinTemperatures") //
+    val lines = sc.textFile("C:/Users/aishw/Downloads/SparkScala/temperature.csv")
+    val parseLines= lines.map(parseLine)
+   
+    val minStationresult= parseLines.map(minTempfunc)
+  
+     /*val minTemps = parseLines.filter(x => x._2 == "TMIN")
+     val allMinStations= minTemps.map(x=> (x._1,x._3.toFloat))//
+     val minStation = allMinStations.reduceByKey((x,y)=> min(x,y))*/
+     val results = minStation.collect()
+     for (result <- results.sorted) {
+       val station = result._1
+       val temp = result._2
+       val formattedTemp = f"$temp%.2f F"
+       println(s"$station minimum temperature: $formattedTemp") 
+       // results.sorted.foreach(println)
+     }
+  }
+  
+  def parseLine(line:String)=  {
+    val fields = line.split(',')
+    val stationID = fields(0)
+    val entryType = fields(2)
+    val temperature = fields(3).toFloat * 0.1f * (9.0f / 5.0f) + 32.0f
+    (stationID, entryType, temperature)    
+  }
+  
+  def minTempfunc(line:(String))=  {
+    val minTemps = line.filter(x => x._2 == "TMIN")
+     val allMinStations= minTemps.map(x=> (x._1,x._3.toFloat))//
+     val minStation = allMinStations.reduceByKey((x,y)=> min(x,y))
+     (minStation)
+  }
+  
+}

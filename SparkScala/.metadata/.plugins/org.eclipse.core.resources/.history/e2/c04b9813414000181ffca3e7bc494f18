@@ -1,0 +1,11 @@
+package com.sundogsoftware.spark
+
+object ScalaLearning2 {
+  
+  def main(args: Array[String]) {
+    
+    logger.getLogger('org').setLevel(Level.ERROR);
+    
+  }
+	 
+}
